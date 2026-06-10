@@ -1,14 +1,20 @@
 {
   "name": "weather-mcp",
   "version": "1.0.0",
-  "description": "",
+  "description": "Lightweight MCP weather server for Claude — Node.js, Streamable HTTP, powered by wttr.in, zero API key",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "mcp",
+    "claude",
+    "weather",
+    "wttr.in",
+    "streamable-http"
+  ],
+  "author": "ovo-hue",
+  "license": "MIT",
   "type": "module",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",

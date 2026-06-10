@@ -1,7 +1,7 @@
 // ============================================================
 // Weather MCP Server  (Node.js + 官方 @modelcontextprotocol/sdk)
 //
-// Transport: Streamable HTTP (stateless), 监听 3000 端口
+// Transport: Streamable HTTP (stateless)，端口读环境变量 PORT（默认 3000）
 // 与 Ombre Brain (8000, streamable-http) 共存，可同样方式接进 Claude 连接器。
 //
 // 工具: get_weather(city) → 调 wttr.in 拿实时天气，返回一句中文。
@@ -16,7 +16,8 @@ import { z } from "zod";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 
-const PORT = 3000;
+// 云平台（Render 等）会通过环境变量 PORT 指定端口，本地不设则默认 3000
+const PORT = process.env.PORT || 3000;
 const WTTR_TIMEOUT_MS = 8000;
 
 // ★★★ 改这里：换成你自己的城市（英文或拼音），如 "Beijing"、"Shanghai" ★★★
@@ -170,7 +171,7 @@ app.delete("/mcp", methodNotAllowed);
 app.get("/health", (_req, res) => res.json({ ok: true, service: "weather-mcp" }));
 
 app.listen(PORT, () => {
-  console.log(`weather-mcp (streamable-http) listening on http://localhost:${PORT}/mcp (default city: ${DEFAULT_CITY})`);
+  console.log(`weather-mcp (streamable-http) listening on port ${PORT}, endpoint /mcp (default city: ${DEFAULT_CITY})`);
 });
 
 process.on("SIGINT", () => {

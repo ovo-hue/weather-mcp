@@ -19,6 +19,10 @@ import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/
 const PORT = 3000;
 const WTTR_TIMEOUT_MS = 8000;
 
+// ★★★ 改这里：换成你自己的城市（英文或拼音），如 "Beijing"、"Shanghai" ★★★
+// 当对话里没有明确指定城市时，就查这个默认城市。
+const DEFAULT_CITY = "Fuzhou";
+
 // wttr.in 的 weatherDesc 即使带 lang=zh 也常返回英文，故按其固定的
 // WWO weatherCode 数字码映射中文，未命中再回退英文描述。
 const WEATHER_CODE_ZH = {
@@ -96,16 +100,19 @@ function buildServer() {
     {
       title: "实时天气查询",
       description:
-        "查询指定城市的实时天气（温度/体感/状况/湿度），数据来自 wttr.in。",
+        "查询指定城市的实时天气（温度/体感/状况/湿度），数据来自 wttr.in。" +
+        "用户明确提到城市时务必传入 city；未提及时返回部署者配置的默认城市。",
       inputSchema: {
         city: z
           .string()
-          .default("Fuzhou")
-          .describe("城市名（英文或拼音更稳），默认 Fuzhou 福州"),
+          .default(DEFAULT_CITY)
+          .describe(
+            `城市名（英文或拼音更稳），如 Beijing、Shanghai。不传则查默认城市 ${DEFAULT_CITY}`
+          ),
       },
     },
     async ({ city }) => {
-      const result = await fetchWeather(city || "Fuzhou");
+      const result = await fetchWeather(city || DEFAULT_CITY);
       return {
         content: [{ type: "text", text: result.text }],
         isError: !result.ok,
@@ -163,7 +170,7 @@ app.delete("/mcp", methodNotAllowed);
 app.get("/health", (_req, res) => res.json({ ok: true, service: "weather-mcp" }));
 
 app.listen(PORT, () => {
-  console.log(`weather-mcp (streamable-http) listening on http://localhost:${PORT}/mcp`);
+  console.log(`weather-mcp (streamable-http) listening on http://localhost:${PORT}/mcp (default city: ${DEFAULT_CITY})`);
 });
 
 process.on("SIGINT", () => {

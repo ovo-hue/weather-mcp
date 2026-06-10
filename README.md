@@ -67,6 +67,15 @@ curl http://localhost:3000/health
 | 隧道 500 错误（ERR 1101） | Cloudflare 临时故障，或本地代理（如 v2ray）污染了隧道流量 | 先重试；不行就让 cloudflared 绕过代理 |
 | curl 打 /mcp 被拒 | MCP 端点需要协议握手 | 正常现象，用 MCP Inspector 验证 |
 | Claude 说查不到天气 | 链路上某一环断了 | 按顺序排查：① node 进程在不在 ② 隧道进程在不在 ③ 连接器里的 URL 是不是最新 ④ wttr.in 是否超时 |
+## 改成你自己的城市
+
+打开 server.js,顶部找到这一行,把 Fuzhou 换成你的城市(英文或拼音):
+
+​```js
+const DEFAULT_CITY = "Fuzhou";  // 改成 "Beijing"、"Shanghai" 等
+​```
+
+之后没指定城市的提问都会查你设置的城市。对话里点名其他城市时不受影响,照常查询。
 
 排障第一步永远是：看日志和 `/health`。
 
